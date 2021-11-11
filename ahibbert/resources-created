@@ -1,0 +1,505 @@
+Release "ahibbert" has been upgraded. Happy Helming!
+NAME: ahibbert
+LAST DEPLOYED: Thu Nov 11 19:03:44 2021
+NAMESPACE: ahibbert
+STATUS: deployed
+REVISION: 4
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+minio:
+  DeploymentUpdate:
+    maxSurge: 100%
+    maxUnavailable: 0
+    type: RollingUpdate
+  StatefulSetUpdate:
+    updateStrategy: RollingUpdate
+  accessKey: admin123A
+  clusterDomain: cluster.local
+  configPath: /root/.minio/
+  configPathmc: /root/.mc/
+  existingSecret: ""
+  extraArgs:
+  - --console-address ':9001'
+  image:
+    pullPolicy: IfNotPresent
+    repository: minio/minio
+    tag: latest
+  mcImage:
+    pullPolicy: IfNotPresent
+    repository: minio/mc
+    tag: latest
+  mode: standalone
+  mountPath: /export
+  persistence:
+    accessMode: ReadWriteOnce
+    enabled: true
+    size: 10Gi
+    storageClass: gp2
+    subPath: ""
+  priorityClassName: ""
+  replicas: 1
+  secretKey: admin123A
+  service:
+    annotations: {}
+    nodePort: 31311
+    port: 9000
+    type: NodePort
+  tls:
+    certSecret: ""
+    enabled: false
+    privateKey: private.key
+    publicCrt: public.crt
+
+COMPUTED VALUES:
+minio:
+  DeploymentUpdate:
+    maxSurge: 100%
+    maxUnavailable: 0
+    type: RollingUpdate
+  StatefulSetUpdate:
+    updateStrategy: RollingUpdate
+  accessKey: admin123A
+  additionalAnnotations: []
+  additionalLabels: []
+  affinity: {}
+  azuregateway:
+    enabled: false
+    replicas: 4
+  bucketRoot: ""
+  buckets: []
+  certsPath: /etc/minio/certs/
+  clusterDomain: cluster.local
+  configPath: /root/.minio/
+  configPathmc: /root/.mc/
+  defaultBucket:
+    enabled: false
+    name: bucket
+    policy: none
+    purge: false
+  drivesPerNode: 1
+  environment: {}
+  etcd:
+    clientCert: ""
+    clientCertKey: ""
+    corednsPathPrefix: ""
+    endpoints: []
+    pathPrefix: ""
+  existingSecret: ""
+  extraArgs:
+  - --console-address ':9001'
+  fullnameOverride: ""
+  gcsgateway:
+    enabled: false
+    gcsKeyJson: ""
+    projectId: ""
+    replicas: 4
+  global: {}
+  helmKubectlJqImage:
+    pullPolicy: IfNotPresent
+    repository: bskim45/helm-kubectl-jq
+    tag: 3.1.0
+  image:
+    pullPolicy: IfNotPresent
+    repository: minio/minio
+    tag: latest
+  imagePullSecrets: []
+  ingress:
+    annotations: {}
+    enabled: false
+    hosts:
+    - chart-example.local
+    labels: {}
+    path: /
+    tls: []
+  makeBucketJob:
+    resources:
+      requests:
+        memory: 128Mi
+    securityContext:
+      enabled: false
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsUser: 1000
+  mcImage:
+    pullPolicy: IfNotPresent
+    repository: minio/mc
+    tag: latest
+  metrics:
+    serviceMonitor:
+      additionalLabels: {}
+      enabled: false
+      relabelConfigs: {}
+  mode: standalone
+  mountPath: /export
+  nameOverride: ""
+  nasgateway:
+    enabled: false
+    replicas: 4
+  networkPolicy:
+    allowExternal: true
+    enabled: false
+  nodeSelector: {}
+  persistence:
+    VolumeName: ""
+    accessMode: ReadWriteOnce
+    enabled: true
+    existingClaim: ""
+    size: 10Gi
+    storageClass: gp2
+    subPath: ""
+  podAnnotations: {}
+  podDisruptionBudget:
+    enabled: false
+    maxUnavailable: 1
+  podLabels: {}
+  priorityClassName: ""
+  replicas: 1
+  resources:
+    requests:
+      memory: 4Gi
+  s3gateway:
+    accessKey: ""
+    enabled: false
+    replicas: 4
+    secretKey: ""
+    serviceEndpoint: ""
+  secretKey: admin123A
+  securityContext:
+    enabled: true
+    fsGroup: 1000
+    runAsGroup: 1000
+    runAsUser: 1000
+  service:
+    annotations: {}
+    externalIPs: []
+    nodePort: 31311
+    port: 9000
+    type: NodePort
+  serviceAccount:
+    create: true
+  tls:
+    certSecret: ""
+    enabled: false
+    privateKey: private.key
+    publicCrt: public.crt
+  tolerations: []
+  trustedCertsSecret: ""
+  updatePrometheusJob:
+    securityContext:
+      enabled: false
+      fsGroup: 1000
+      runAsGroup: 1000
+      runAsUser: 1000
+  zones: 1
+
+HOOKS:
+MANIFEST:
+---
+# Source: ahibbert/charts/minio/templates/post-install-prometheus-metrics-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ahibbert-minio-update-prometheus-secret
+  labels:
+    app: minio-update-prometheus-secret
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+---
+# Source: ahibbert/charts/minio/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: "ahibbert-minio"
+  namespace: "ahibbert"
+  labels:
+    app: minio
+    chart: minio-8.0.10
+    release: "ahibbert"
+---
+# Source: ahibbert/charts/minio/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ahibbert-minio
+  labels:
+    app: minio
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+type: Opaque
+data:
+  accesskey: "YWRtaW4xMjNB"
+  secretkey: "YWRtaW4xMjNB"
+---
+# Source: ahibbert/charts/minio/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ahibbert-minio
+  labels:
+    app: minio
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+data:
+  initialize: |-
+    #!/bin/sh
+    set -e ; # Have script exit in the event of a failed command.
+    MC_CONFIG_DIR="/root/.mc/"
+    MC="/usr/bin/mc --insecure --config-dir ${MC_CONFIG_DIR}"
+    
+    # connectToMinio
+    # Use a check-sleep-check loop to wait for Minio service to be available
+    connectToMinio() {
+      SCHEME=$1
+      ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
+      set -e ; # fail if we can't read the keys.
+      ACCESS=$(cat /config/accesskey) ; SECRET=$(cat /config/secretkey) ;
+      set +e ; # The connections to minio are allowed to fail.
+      echo "Connecting to Minio server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
+      MC_COMMAND="${MC} config host add myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
+      $MC_COMMAND ;
+      STATUS=$? ;
+      until [ $STATUS = 0 ]
+      do
+        ATTEMPTS=`expr $ATTEMPTS + 1` ;
+        echo \"Failed attempts: $ATTEMPTS\" ;
+        if [ $ATTEMPTS -gt $LIMIT ]; then
+          exit 1 ;
+        fi ;
+        sleep 2 ; # 1 second intervals between attempts
+        $MC_COMMAND ;
+        STATUS=$? ;
+      done ;
+      set -e ; # reset `e` as active
+      return 0
+    }
+    
+    # checkBucketExists ($bucket)
+    # Check if the bucket exists, by using the exit code of `mc ls`
+    checkBucketExists() {
+      BUCKET=$1
+      CMD=$(${MC} ls myminio/$BUCKET > /dev/null 2>&1)
+      return $?
+    }
+    
+    # createBucket ($bucket, $policy, $purge)
+    # Ensure bucket exists, purging if asked to
+    createBucket() {
+      BUCKET=$1
+      POLICY=$2
+      PURGE=$3
+      VERSIONING=$4
+    
+      # Purge the bucket, if set & exists
+      # Since PURGE is user input, check explicitly for `true`
+      if [ $PURGE = true ]; then
+        if checkBucketExists $BUCKET ; then
+          echo "Purging bucket '$BUCKET'."
+          set +e ; # don't exit if this fails
+          ${MC} rm -r --force myminio/$BUCKET
+          set -e ; # reset `e` as active
+        else
+          echo "Bucket '$BUCKET' does not exist, skipping purge."
+        fi
+      fi
+    
+      # Create the bucket if it does not exist
+      if ! checkBucketExists $BUCKET ; then
+        echo "Creating bucket '$BUCKET'"
+        ${MC} mb myminio/$BUCKET
+      else
+        echo "Bucket '$BUCKET' already exists."
+      fi
+    
+    
+      # set versioning for bucket
+      if [ ! -z $VERSIONING ] ; then
+        if [ $VERSIONING = true ] ; then
+            echo "Enabling versioning for '$BUCKET'"
+            ${MC} version enable myminio/$BUCKET
+        elif [ $VERSIONING = false ] ; then
+            echo "Suspending versioning for '$BUCKET'"
+            ${MC} version suspend myminio/$BUCKET
+        fi
+      else
+          echo "Bucket '$BUCKET' versioning unchanged."
+      fi
+    
+      # At this point, the bucket should exist, skip checking for existence
+      # Set policy on the bucket
+      echo "Setting policy of bucket '$BUCKET' to '$POLICY'."
+      ${MC} policy set $POLICY myminio/$BUCKET
+    }
+    
+    # Try connecting to Minio instance
+    scheme=http
+    connectToMinio $scheme
+---
+# Source: ahibbert/charts/minio/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ahibbert-minio
+  labels:
+    app: minio
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"
+  storageClassName: "gp2"
+---
+# Source: ahibbert/charts/minio/templates/post-install-prometheus-metrics-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ahibbert-minio-update-prometheus-secret
+  labels:
+    app: minio-update-prometheus-secret
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - create
+      - update
+      - patch
+    resourceNames:
+      - ahibbert-minio-prometheus
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+  - apiGroups:
+      - monitoring.coreos.com
+    resources:
+      - servicemonitors
+    verbs:
+      - get
+    resourceNames:
+      - ahibbert-minio
+---
+# Source: ahibbert/charts/minio/templates/post-install-prometheus-metrics-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ahibbert-minio-update-prometheus-secret
+  labels:
+    app: minio-update-prometheus-secret
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ahibbert-minio-update-prometheus-secret
+subjects:
+  - kind: ServiceAccount
+    name: ahibbert-minio-update-prometheus-secret
+    namespace: "ahibbert"
+---
+# Source: ahibbert/charts/minio/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: ahibbert-minio
+  labels:
+    app: minio
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 9000
+      protocol: TCP
+      nodePort: 31311
+  selector:
+    app: minio
+    release: ahibbert
+---
+# Source: ahibbert/charts/minio/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ahibbert-minio
+  labels:
+    app: minio
+    chart: minio-8.0.10
+    release: ahibbert
+    heritage: Helm
+spec:
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: minio
+      release: ahibbert
+  template:
+    metadata:
+      name: ahibbert-minio
+      labels:
+        app: minio
+        release: ahibbert
+      annotations:
+        checksum/secrets: 2460702d9bba56716a3746a2c6810acd98d0d7611868a816f4247c69b555ddb6
+        checksum/config: eeb7a67959d23fe14df5e3109fa083ec654657685e5d7c0258514a9102074c90
+    spec:
+      serviceAccountName: "ahibbert-minio"
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: minio
+          image: "minio/minio:latest"
+          imagePullPolicy: IfNotPresent
+          command:
+            - "/bin/sh"
+            - "-ce"
+            - "/usr/bin/docker-entrypoint.sh minio -S /etc/minio/certs/ server /export --console-address ':9001'"
+          volumeMounts:
+            - name: export
+              mountPath: /export            
+          ports:
+            - name: http
+              containerPort: 9000
+          env:
+            - name: MINIO_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ahibbert-minio
+                  key: accesskey
+            - name: MINIO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ahibbert-minio
+                  key: secretkey
+          resources:
+            requests:
+              memory: 4Gi      
+      volumes:
+        - name: export
+          persistentVolumeClaim:
+            claimName: ahibbert-minio
+        - name: minio-user
+          secret:
+            secretName: ahibbert-minio
+

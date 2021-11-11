@@ -1,0 +1,4 @@
+dependencies:
+  - name: minio
+    version: 8.0.10
+    condition: minio.enabled
