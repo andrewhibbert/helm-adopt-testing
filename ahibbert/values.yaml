@@ -1,43 +1,43 @@
-# minio:
-#   extraArgs: ["--console-address ':9001'"]
-#   clusterDomain: cluster.local
-#   image:
-#     repository: minio/minio
-#     tag: latest
-#     pullPolicy: IfNotPresent
-#   mcImage:
-#     repository: minio/mc
-#     tag: latest
-#     pullPolicy: IfNotPresent
-#   mode: standalone
-#   DeploymentUpdate:
-#     type: RollingUpdate
-#     maxUnavailable: 0
-#     maxSurge: 100%
-#   StatefulSetUpdate:
-#     updateStrategy: RollingUpdate
-#   priorityClassName: ""
-#   existingSecret: ""
-#   accessKey: admin123A
-#   secretKey: admin123A
-#   configPath: "/root/.minio/"
-#   configPathmc: "/root/.mc/"
-#   mountPath: "/export"
-#   replicas: 1
-#   tls:
-#     enabled: false
-#     certSecret: ""
-#     publicCrt: public.crt
-#     privateKey: private.key
-#   persistence:
-#     enabled: true
-#     storageClass: gp2
-#     accessMode: "ReadWriteOnce"
-#     size: 10Gi
-#     subPath: ""
-#   service:
-#     type: NodePort
-#     port: 9000
-#     nodePort: 31311
-#     annotations: {}
-#   enabled: false
+minio:
+  extraArgs: ["--console-address ':9001'"]
+  clusterDomain: cluster.local
+  image:
+    repository: minio/minio
+    tag: latest
+    pullPolicy: IfNotPresent
+  mcImage:
+    repository: minio/mc
+    tag: latest
+    pullPolicy: IfNotPresent
+  mode: standalone
+  DeploymentUpdate:
+    type: RollingUpdate
+    maxUnavailable: 0
+    maxSurge: 100%
+  StatefulSetUpdate:
+    updateStrategy: RollingUpdate
+  priorityClassName: ""
+  existingSecret: ""
+  accessKey: admin123A
+  secretKey: admin123A
+  configPath: "/root/.minio/"
+  configPathmc: "/root/.mc/"
+  mountPath: "/export"
+  replicas: 1
+  tls:
+    enabled: false
+    certSecret: ""
+    publicCrt: public.crt
+    privateKey: private.key
+  persistence:
+    enabled: true
+    storageClass: gp2
+    accessMode: "ReadWriteOnce"
+    size: 10Gi
+    subPath: ""
+  service:
+    type: NodePort
+    port: 9000
+    nodePort: 31311
+    annotations: {}
+  enabled: false

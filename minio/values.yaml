@@ -4,11 +4,11 @@ minio:
   image:
     repository: minio/minio
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   mcImage:
     repository: minio/mc
     tag: latest
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   mode: standalone
   DeploymentUpdate:
     type: RollingUpdate
@@ -40,4 +40,4 @@ minio:
     port: 9000
     nodePort: 31311
     annotations: {}
-  fullnameOverride: ahibbert-minio
+  # fullnameOverride: ahibbert-minio
